@@ -37,7 +37,7 @@ $ chromium &
 ```
 At this point just open some SSL / HTTPS pages like for example `https://www.google.it` so that the SSLKEYLOGFILE gets populated -->
 
-## Starting proxy
+### Starting proxy
 
 To start mitm proxy just open a new terminal and type
 
@@ -46,7 +46,7 @@ $ mitmweb # For web version
 $ mitmproxy # For terminal version
 ```
 
-## Installing Mitm Proxy Certificate
+### Installing Mitm Proxy Certificate
 
 Now using mitm proxy you can reach and intercept all HTTP domains but when you try to surf on an HTTPS
 domain it will warn you that it's not secure to proceed.
@@ -60,7 +60,7 @@ This way you can also reach HTTPS domains without getting that warning.
 ## Populate SSLKEYLOGFILE
 
 To populate SSLKEYLOGFILE simply navigate through different pages using SSL / HTTPS such as `https://www.google.it` so that SESSION KEYS
-will be created inside of SSLKEYLOGFILE.
+will be created inside of `SSLKEYLOGFILE`.
 
 ## Configure Wireshark
 
@@ -73,3 +73,82 @@ Now just start a new Wireshark scan on the target network-adapter and see all yo
 being logged on your screen.
 
 ## Android App Sniffing
+
+In order to sniff packets of android app you need to:
+
+- [x] Configure android emulator
+- [x] Set proxy of android emulator
+- [x] Install frida-server on android-emulator
+- [x] Disable SSL pinning of the App
+
+### Configure Android Emulator
+
+The first thing to do is to configure an android emulator; the best way
+is to use `Android Studio Emulators`.
+
+When you are creating an emulator is important to choose a version that does not support
+`google play store` in order to gain `root` access to the device.
+
+### Configure Proxy
+
+Once that the emulator is configured and you started it we have to configure proxy on it. Just go
+to android emulator settings and set a proxy with host `localhost` and port `8080`.
+
+### Install Frida - Android
+
+Now you need to install frida-server, you can download it from the official repo: https://github.com/frida/frida/releases
+
+After downloading frida, drag and drop the extracted content of the zip file into the emulator. Dragged file by be
+available into the download folder.
+
+At this point enter inside the emulator with a shell with the following command:
+
+```console
+$ adb root
+$ adb shell
+```
+
+Then copy frida-server in `/data/local/tmp`
+
+```
+$ cd storage/emulated/0/Download
+$ cp frida-server-x.y.z-android-<architecture> \
+    /data/local/tmp/frida-server
+```
+
+Last thing to do is to start the frida-server doing the following:
+
+```console
+$ ./frida-server &
+```
+
+Install Objection Python Library - PC
+
+To install `Objection` on pc we just need the following command:
+
+```console
+$ pip3 install objection
+```
+
+### Disable SSL Pinning of App
+
+First we need to find the package of our app.
+
+```console
+$ adb shell ps # Look for your app package -> ex. com.example.org
+```
+
+Once you found the package connect to the frida process
+
+```console
+$ objection -g <package-name> explore
+```
+
+When connection has been established, disable SSL Pinning
+
+```console
+$ android sslpinning disable
+```
+
+At this point SSL should be disabled for your application and now you can
+use it sniffing all requests. Requests can be seen in wireshark.
