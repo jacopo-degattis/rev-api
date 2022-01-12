@@ -24,7 +24,7 @@ $ export SSLKEYLOGFILE=<LOCATION_TO_SSLKEYLOGFILE>
 
 After setting the ENV variable you have to set a proxy, either to your browser or to your system.
 
-The proxy should point to host `localhost` and to port `8080` unless you have changed default configuration settings.
+The proxy should point to `localhost` on port `8080` unless you have changed mitm default configuration settings.
 
 <!-- After setting the ENV variable you have to close all browser istances, make sure of that because it's a crucuial step.
 
@@ -51,7 +51,7 @@ $ mitmproxy # For terminal version
 Now using mitm proxy you can reach and intercept all HTTP domains but when you try to surf on an HTTPS
 domain it will warn you that it's not secure to proceed.
 
-To avoid this problem you have to simply downloading Mitm Certificate going on `http://mitm.it`.
+To avoid this problem you have to simply download Mitm Certificate going on `http://mitm.it`.
 
 Then select your operating system, download the certificate and install it.
 
@@ -59,25 +59,28 @@ This way you can also reach HTTPS domains without getting that warning.
 
 ## Populate SSLKEYLOGFILE
 
-To populate SSLKEYLOGFILE simply navigate through different pages using SSL / HTTPS such as `https://www.google.it` so that SESSION KEYS
+To populate SSLKEYLOGFILE you have to navigate through different pages using SSL / HTTPS such as `https://www.google.it` so that SESSION KEYS
 will be created inside of `SSLKEYLOGFILE`.
+
+> This step is really important, without it you cannot proceed in any way.
 
 ## Configure Wireshark
 
-After configuring the proxy we need to configure wireshark.
+After configuring the proxy we need to setup wireshark.
 
-First of all open wireshark and go to: Edit -> Preferences -> Protocols -> TLS -> (Pre)-Master-Secret log filename
-and select the target SSLKEYLOGFILE.
+First of all open wireshark and go to:
+`Edit -> Preferences -> Protocols -> TLS -> (Pre)-Master-Secret log filename`
+and select the target SSLKEYLOGFILE that has been generated before.
 
 Now just start a new Wireshark scan on the target network-adapter and see all your requests (HTTP/HTTPS etc.)
 being logged on your screen.
 
 ## Android App Sniffing
 
-In order to sniff packets of android app you need to:
+In order to sniff packets of android apps you need to:
 
-- [x] Configure android emulator
-- [x] Set proxy of android emulator
+- [x] Configure an android emulator
+- [x] Set proxy on the android emulator
 - [x] Install frida-server on android-emulator
 - [x] Disable SSL pinning of the App
 
@@ -87,25 +90,27 @@ The first thing to do is to configure an android emulator; the best way
 is to use `Android Studio Emulators`.
 
 When you are creating an emulator is important to choose a version that does not support
-`google play store` in order to gain `root` access to the device.
+`Google Play Store` in order to gain `root` access to the device.
 
 ### Configure Proxy
 
-Once that the emulator is configured and you started it we have to configure proxy on it. Just go
+Once that the emulator is configured and started we have to setup the proxy on it. Just go
 to android emulator settings and set a proxy with host `localhost` and port `8080`.
 
 ### Install Frida - Android
 
-Now you need to install frida-server, you can download it from the official repo: https://github.com/frida/frida/releases
+Now you need to install frida-server, you can download it from the official repo:
 
-After downloading frida, drag and drop the extracted content of the zip file into the emulator. Dragged file by be
+> https://github.com/frida/frida/releases
+
+After downloading frida, drag and drop the extracted content of the zip file into the emulator. Dragged file will be
 available into the download folder.
 
 At this point enter inside the emulator with a shell with the following command:
 
 ```console
-$ adb root
-$ adb shell
+$ adb root # Gain root permission in the shell
+$ adb shell # Enter inside the android emulator with a shell
 ```
 
 Then copy frida-server in `/data/local/tmp`
@@ -122,7 +127,7 @@ Last thing to do is to start the frida-server doing the following:
 $ ./frida-server &
 ```
 
-Install Objection Python Library - PC
+### Install Objection Python Library - PC
 
 To install `Objection` on pc we just need the following command:
 
@@ -152,3 +157,7 @@ $ android sslpinning disable
 
 At this point SSL should be disabled for your application and now you can
 use it sniffing all requests. Requests can be seen in wireshark.
+
+## Author
+
+Jacopo De Gattis
