@@ -157,6 +157,22 @@ When connection has been established, disable SSL Pinning
 $ android sslpinning disable
 ```
 
+### NOTE: I found a better solution
+
+> Instead of using objection, which most of times fail bypassing SSL pinning,
+> we can use a script that I found here: https://github.com/httptoolkit/frida-android-unpinning
+
+You just have to downlaod the file: `frida-script.js`
+
+Once downloaded we have to install `frida-tools` with the following command:
+`pip3 install frida-tools`
+
+Now just execute:
+
+```console
+$ frida --no-pause -U -l ./frida-script.js -f $TARGET_PACKAGE_NAME
+```
+
 At this point SSL should be disabled for your application and now you can
 use it sniffing all requests. Requests can be seen in wireshark.
 
