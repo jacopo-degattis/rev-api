@@ -1,7 +1,5 @@
 # Reverse Engineer API
 
-LICENSE: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
-
 ## Description
 
 Step by step explanation on how to reverse engineer an API using Wireshark, MitmProxy and Frida (Android).
